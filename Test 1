@@ -1,0 +1,26 @@
+import requests
+from bs4 import BeautifulSoup
+
+def get_latest_time_stories():
+    # Send GET request to Time.com
+    url = "https://time.com"
+    response = requests.get(url)
+    
+    # Parse HTML content
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    # Extract latest stories
+    latest_stories = []
+    stories_container = soup.find('section', class_='homepage-module latest-stories')
+    if stories_container:
+        stories = stories_container.find_all('article')
+        for story in stories[:6]:
+            title = story.find('h2', class_='title').text.strip()
+            link = story.find('a')['href']
+            latest_stories.append({"title": title, "link": link})
+    
+    return latest_stories
+
+# Call the function to get the latest Time.com stories
+latest_stories = get_latest_time_stories()
+print(latest_stories)
